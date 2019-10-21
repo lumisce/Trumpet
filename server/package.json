@@ -3,22 +3,32 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "nodemon src/index.js --exec babel-node",
+    "start": "nodemon src/app.js --exec babel-node",
     "build": "babel src -d build --source-maps",
-    "serve": "NODE_ENV=production node build/index.js"
+    "test": "DEBUG=server:debug NODE_ENV=test mocha --require @babel/register --require core-js --require regenerator-runtime --reporter spec --exit tests/",
+    "serve": "NODE_ENV=production node build/app.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",
     "@babel/core": "^7.6.4",
     "@babel/node": "^7.6.3",
     "@babel/preset-env": "^7.6.3",
+    "@babel/register": "^7.6.2",
     "babel-eslint": "^10.0.3",
+    "mocha": "^6.2.2",
     "nodemon": "^1.19.4"
   },
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
-    "dotenv": "^8.2.0",
+    "config": "^3.2.3",
     "eslint": "^6.5.1",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "express-validator": "^6.2.0",
+    "faker": "^4.1.0",
+    "mysql": "^2.17.1",
+    "mysql2": "^1.7.0",
+    "sequelize": "^5.21.1",
+    "sequelize-cli": "^5.5.1"
   }
 }

@@ -1,0 +1,5 @@
+{
+	"name": "Server Test",
+	"database": "mysql://root:root@localhost:3306/trumpet_test",
+	"port": 3011
+}
