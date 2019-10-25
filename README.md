@@ -20,4 +20,4 @@ Open [http://localhost:3001](http://localhost:3001) to view it in the browser.
 Runs the client and server concurrently in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-### More Scripts in client/package.json and server/package.json
+### More Scripts in `client/package.json` and `server/package.json`
