@@ -3,14 +3,17 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import models from './models/index'
 
+import userRouter from './routes/user'
+import authRouter from './routes/auth'
+
 const app = express()
 const port = config.get('port')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 
-var userRouter = require('./routes/user')
 app.use('/api/users', userRouter)
+app.use('/api/auth', authRouter)
 
 module.exports = (async () => {
 	await models.sequelize.sync()
