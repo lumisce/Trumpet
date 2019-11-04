@@ -7,15 +7,14 @@ exports.getUsers = async (query, page, limit) => {
 	try {
 		const offset = (page-1)*limit
 		const users = await User.findAndCountAll({
-			...query, 
+			where: query, 
 			limit: limit, 
 			offset: offset
 		})
-		console.log(users)
 		return users
 	} catch (err) {
-		console.log(err)
-		throw Error('Error in getUsers')
+		console.log('Error in getUsers')
+		throw(err)
 	}
 }
 
@@ -27,7 +26,7 @@ exports.createUser = async (data) => {
 		const {id, username, ...rest} = user
 		return {id, username}
 	} catch (err) {
-		console.log(err)
-		throw Error('Error in createUser')
+		console.log('Error in createUser')
+		throw(err)
 	}
 }

@@ -15,6 +15,11 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use('/api/users', userRouter)
 app.use('/api/auth', authRouter)
 
+app.use((err, req, res) => {
+	console.error(err.stack)
+	res.status(500).send('Something went wrong.')
+})
+
 module.exports = (async () => {
 	await models.sequelize.sync()
 	const listen = app.listen(port, () => {

@@ -3,14 +3,16 @@ import { expect } from 'chai'
 import db from '../src/models/index'
 import userFactory from './factories/user'
 
-let server
-before(async () => {
-	server = await require('../src/app')
-	await db.sequelize.truncate()
-	await userFactory(15)
-})
+
 
 describe('Trumpet User API Tests', () => {
+	let server
+	before(async () => {
+		server = await require('../src/app')
+		await db.sequelize.truncate()
+		await userFactory(15)
+	})
+	
 	it('returns an object from GET /api/users', async() => {
 		const response = await request(server).get('/api/users')
 		expect(response.status).to.equal(200)

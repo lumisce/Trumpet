@@ -13,7 +13,7 @@ exports.login = async ({password, ...data}, client) => {
 
 	const passwordMatches = await bcrypt.compare(password, user.password)
 	if (!passwordMatches) {
-		throw Error('Wrong password')
+		throw Error('User not found')
 	}
 
 	const token = jwtSign(user, client)

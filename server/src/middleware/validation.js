@@ -17,6 +17,13 @@ export const createUserValidation = () => {
 	]
 }
 
+export const loginValidation = () => {
+	return [
+		body('email').isEmail(),
+		body('password').exists()
+	]
+}
+
 export const validate = (req, res, next) => {
 	const errors = validationResult(req)
 	if (errors.isEmpty()) {
