@@ -1,81 +1,161 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { userPostFetch } from '../store/actions'
+import React, { useState } from 'react'
+import { Redirect } from 'react-router-dom'
+import { fetchData } from '../helpers'
+import Avatar from '@material-ui/core/Avatar'
+import Button from '@material-ui/core/Button'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+import Link from '@material-ui/core/Link'
+import Container from '@material-ui/core/Container'
+import { makeStyles } from '@material-ui/core/styles'
 
-class Register extends Component {
-	state = {
+const Register = () => {
+	const [user, setUser] = useState({
 		username: '',
 		email: '',
 		password: '',
-		passwordConfirmation: ''
-	}
+		passwordConfirmation: '',
+	})
+	const [errors, setErrors] = useState({})
+	const [redirect, setRedirect] = useState(false)
 
-	handleChange = event => {
-		this.setState({
+	const handleChange = event => {
+		setUser({
+			...user,
 			[event.target.name]: event.target.value
 		})
 	}
 
-	handleSubmit = event => {
+	const handleSubmit = event => {
 		event.preventDefault()
-		this.props.userPostFetch(this.state)
+		const newErrors = {}
+		for (let prop in user) {
+			if (!user[prop].length) {
+				newErrors[prop] = 'Required'
+			}
+		}
+		console.log('newError', newErrors)
+		if (Object.entries(newErrors).length) {
+			setErrors(newErrors)
+			return
+		}
+		return fetchData('/api/users', 'POST', user)
+			.then(() => {
+				setRedirect()
+			})
+			.catch(async (err) => {
+				if (err.status >= 500) {
+					console.log('Something went wrong')
+					return
+				}
+				let errData = await err.response.json()
+				if (errData.errors) {
+					console.log(errData.errors)
+					setErrors(errData.errors)
+				} else {
+					console.log(errData.message)
+				}
+			})
 	}
 
-	render() {
-		return (
-			<div className="m-6">
-				<h1 className="header-1 text-center">Register</h1>
-				<form className="w-full max-w-sm" onSubmit={this.handleSubmit}>
-					<div className="md:flex md:items-center mb-6">
-						<div className="md:w-1/3">
-							<label className="form-label md:text-right md:mb-0">Username</label>
-						</div>
-						<div className="md:w-2/3">
-							<input className="input-text"
-								type="text" name="username" placeholder="Username" value={this.state.username} onChange={this.handleChange}/>
-						</div>
-					</div>
-					<div className="md:flex md:items-center mb-6">
-						<div className="md:w-1/3">
-							<label className="form-label md:text-right md:mb-0">Email</label>
-						</div>
-						<div className="md:w-2/3">
-							<input className="input-text"
-								type="email" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange}/>
-						</div>
-					</div>
-					<div className="md:flex md:items-center mb-6">
-						<div className="md:w-1/3">
-							<label className="form-label md:text-right md:mb-0">Password</label>
-						</div>
-						<div className="md:w-2/3">
-							<input className="input-text"
-								type="password" name="password" placeholder="Password" value={this.state.password} onChange={this.handleChange}/>
-						</div>
-					</div>
-					<div className="md:flex md:items-center mb-6">
-						<div className="md:w-1/3">
-							<label className="form-label md:text-right md:mb-0">Retype Password</label>
-						</div>
-						<div className="md:w-2/3">
-							<input className="input-text"
-								type="password" name="passwordConfirmation" placeholder="Retype Password" value={this.state.passwordConfirmation} onChange={this.handleChange}/>
-						</div>
-					</div>
-					<div className="md:flex md:items-center mb-6">
-						<div className="md:w-1/3"></div>
-						<div className="md:w-2/3">
-							<button className="btn btn-primary" type="submit">Register</button>
-						</div>
+	const renderRedirect = () => {
+		if (redirect) {
+			return (
+				<Redirect push to={{
+					pathname: '/login',
+					state: { afterRegister: true }
+				}}/>
+			)
+		}
+	}
+
+	const useStyles = makeStyles(theme => ({
+		paper: {
+			marginTop: theme.spacing(8),
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'center',
+		},
+		avatar: {
+			margin: theme.spacing(1),
+			backgroundColor: theme.palette.secondary.main
+		},
+		form: {
+			width: '100%',
+			marginTop: theme.spacing(1),
+		},
+		submit: {
+			margin: theme.spacing(3, 0, 2),
+			padding: theme.spacing(1)
+		},
+		linkContainer: {
+			width: '100%',
+			display: 'flex',
+			justifyContent: 'flex-end'
+		},
+		link: {
+			display: 'block'
+		}
+	}))
+
+	const classes = useStyles()
+
+	return (
+		<Container component="main" maxWidth="xs">
+			{renderRedirect()}
+			<div className={classes.paper}>
+				<Avatar className={classes.avatar}>
+					<LockOutlinedIcon/>
+				</Avatar>
+				<Typography component="h1" variant="h5">
+					Register
+				</Typography>
+				<form className={classes.form} noValidate onSubmit={handleSubmit}>
+					<TextField 
+						label="Username" id="username" name="username"
+						required autoFocus
+						onChange={handleChange}
+						{...errors.username && {error:true}}
+						helperText={errors.username}
+					/>
+					<TextField
+						label="Email" id="email" name="email"
+						required
+						onChange={handleChange}
+						{...errors.email && {error:true}}
+						helperText={errors.email}
+					/>
+					<TextField
+						label="Password" id="password" name="password"
+						required
+						onChange={handleChange}
+						{...errors.password && {error:true}}
+						helperText={errors.password}
+					/>
+					<TextField
+						label="Retype Password"
+						id="passwordConfirmation" name="passwordConfirmation"
+						required
+						onChange={handleChange}
+						{...errors.passwordConfirmation && {error:true}}
+						helperText={errors.passwordConfirmation}
+					/>
+					<Button
+						type="submit"
+						fullWidth variant="contained" color="primary"
+						className={classes.submit}>
+						Register
+					</Button>
+					<div className={classes.linkContainer}>
+						<Link className={classes.link} href="/login" variant="body2">
+							{'Have an account? Login'}
+						</Link>
 					</div>
 				</form>
 			</div>
-		)
-	}
+		</Container>
+	)
 }
 
-const mapDispatchToProps = dispatch => ({
-	userPostFetch: userInfo => dispatch(userPostFetch(userInfo))
-})
-
-export default connect(null, mapDispatchToProps)(Register)
+export default Register

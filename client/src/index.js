@@ -5,7 +5,6 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import { BrowserRouter } from 'react-router-dom'
 import reducer from './store/reducers'
-import './styles.css'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 
