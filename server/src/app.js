@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use('/api/users', userRouter)
 app.use('/api/auth', authRouter)
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
 	console.error(err.stack)
 	res.status(500).send('Something went wrong.')
 })
