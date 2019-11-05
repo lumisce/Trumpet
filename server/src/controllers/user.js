@@ -1,3 +1,4 @@
+import { mapErrors } from '../common/helpers'
 import UserService from '../services/user'
 
 module.exports.getUsers = async (req, res, next) => {
@@ -26,6 +27,11 @@ module.exports.createUser = async (req, res, next) => {
 			message: 'User Successfully Created'
 		})
 	} catch (err) {
+		if (err.errors) {
+			return res.status(422).json({
+				errors: mapErrors(err.errors),
+			})
+		}
 		next(err)
 	}
 }

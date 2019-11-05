@@ -9,11 +9,15 @@ export const getUsersValidation = () => {
 
 export const createUserValidation = () => {
 	return [
-		body('username').isLength({min: 3, max: 32}),
-		body('email').isEmail(),
-		body('password').isLength({min: 8, max: 40}),
-		body('passwordConfirmation').exists()
+		body('username').isLength({min: 3, max: 32})
+			.withMessage('3-32 characters required'),
+		body('email').isEmail().withMessage('Valid email required'),
+		body('password').isLength({min: 8, max: 40})
+			.withMessage('8-40 characters required'),
+		body('passwordConfirmation').not().isEmpty()
+			.withMessage('Required')
 			.custom((value, {req}) => value === req.body.password)
+			.withMessage('Must match password')
 	]
 }
 
