@@ -1,10 +1,35 @@
 import { query, body, validationResult } from 'express-validator'
+import UserService from '../services/user'
 
 export const getUsersValidation = () => {
 	return [
 		query('page').optional().isInt().toInt(),
 		query('limit').optional().isInt().toInt()
 	]
+}
+
+export const validateUsername = async (req, res, next) => {
+	const exists = await UserService.hasUsername(req.body.username)
+	if (exists) {
+		return res.status(422).json({
+			errors: {
+				username: 'Username exists'
+			}
+		})
+	}
+	next()
+}
+
+export const validateEmail = async (req, res, next) => {
+	const exists = await UserService.hasEmail(req.body.email)
+	if (exists) {
+		return res.status(422).json({
+			errors: {
+				email: 'Email exists'
+			}
+		})
+	}
+	next()
 }
 
 export const createUserValidation = () => {
@@ -24,7 +49,7 @@ export const createUserValidation = () => {
 export const loginValidation = () => {
 	return [
 		body('email').isEmail(),
-		body('password').exists()
+		body('password').not().isEmpty()
 	]
 }
 

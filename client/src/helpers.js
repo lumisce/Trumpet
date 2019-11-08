@@ -1,5 +1,5 @@
-export const fetchData = (url, method='GET', body={}, headers) => {
-	return fetch('/api/users', {
+export const fetchData = (url, method='GET', body={}, headers={}) => {
+	return fetch(url, {
 		method: method,
 		body: JSON.stringify(body),
 		headers: {
@@ -16,4 +16,11 @@ export const fetchData = (url, method='GET', body={}, headers) => {
 		}
 		return resp
 	}).then(resp => resp.json())
+		.catch(async (err) => {
+			if (err.status >= 500) {
+				console.log('Something went wrong')
+				return
+			}
+			throw err
+		})
 }

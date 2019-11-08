@@ -1,61 +1,45 @@
 import React, { useState } from 'react'
+import useForm from 'react-hook-form'
 import { Redirect } from 'react-router-dom'
 import { fetchData } from '../helpers'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
+import Container from '@material-ui/core/Container'
+import Link from '@material-ui/core/Link'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
-import Link from '@material-ui/core/Link'
-import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/core/styles'
 
 const Register = () => {
-	const [user, setUser] = useState({
-		username: '',
-		email: '',
-		password: '',
-		passwordConfirmation: '',
-	})
-	const [errors, setErrors] = useState({})
 	const [redirect, setRedirect] = useState(false)
 
-	const handleChange = event => {
-		setUser({
-			...user,
-			[event.target.name]: event.target.value
-		})
-	}
+	const { register, handleSubmit, watch, errors } = useForm()
 
-	const handleSubmit = event => {
-		event.preventDefault()
-		const newErrors = {}
-		for (let prop in user) {
-			if (!user[prop].length) {
-				newErrors[prop] = 'Required'
-			}
-		}
-		console.log('newError', newErrors)
-		if (Object.entries(newErrors).length) {
-			setErrors(newErrors)
-			return
-		}
-		return fetchData('/api/users', 'POST', user)
+	const onSubmit = data => {
+		return fetchData('/api/users', 'POST', data)
 			.then(() => {
-				setRedirect()
+				setRedirect(true)
 			})
 			.catch(async (err) => {
-				if (err.status >= 500) {
-					console.log('Something went wrong')
-					return
-				}
-				let errData = await err.response.json()
-				if (errData.errors) {
-					console.log(errData.errors)
-					setErrors(errData.errors)
-				} else {
-					console.log(errData.message)
-				}
+				const errData = await err.response.json()
+				console.log(errData)
+			})
+	}
+
+	const validateUsername = async (username) => {
+		return fetchData('/api/users/validate/username', 'POST', {username})
+			.catch(async (err) => {
+				const errData = await err.response.json()
+				return errData.errors.username
+			})
+	}
+
+	const validateEmail = async (email) => {
+		return fetchData('/api/users/validate/email', 'POST', {email})
+			.catch(async (err) => {
+				const errData = await err.response.json()
+				return errData.errors.email
 			})
 	}
 
@@ -111,35 +95,45 @@ const Register = () => {
 				<Typography component="h1" variant="h5">
 					Register
 				</Typography>
-				<form className={classes.form} noValidate onSubmit={handleSubmit}>
+				<form className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>
 					<TextField 
 						label="Username" id="username" name="username"
-						required autoFocus
-						onChange={handleChange}
 						{...errors.username && {error:true}}
-						helperText={errors.username}
+						helperText={errors.username && errors.username.message}
+						inputRef={register({
+							required: 'Required',
+							minlength: { value: 3, message: '3-32 characters required'},
+							maxlength: { value: 32, message: '3-32 characters required'},
+							pattern: { value: /^[a-zA-Z0-9_]+$/, message: 'Must be alphanumeric or _'} ,
+							validate: async value => await validateUsername(value)
+						})}
+						autoFocus
 					/>
 					<TextField
 						label="Email" id="email" name="email"
-						required
-						onChange={handleChange}
 						{...errors.email && {error:true}}
-						helperText={errors.email}
+						helperText={errors.email && errors.email.message}
+						inputRef={register({
+							required: 'Required',
+							pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email'},
+							validate: async value => await validateEmail(value)
+						})}
 					/>
-					<TextField
+					<TextField type="password"
 						label="Password" id="password" name="password"
-						required
-						onChange={handleChange}
 						{...errors.password && {error:true}}
-						helperText={errors.password}
+						helperText={errors.password && '8-40 characters required'}
+						inputRef={register({ required: true, minLength: 8, maxLength: 40 })}
 					/>
 					<TextField
-						label="Retype Password"
+						label="Retype Password" type="password"
 						id="passwordConfirmation" name="passwordConfirmation"
-						required
-						onChange={handleChange}
 						{...errors.passwordConfirmation && {error:true}}
-						helperText={errors.passwordConfirmation}
+						helperText={errors.passwordConfirmation && errors.passwordConfirmation.message}
+						inputRef={register({
+							required: 'Required',
+							validate: value => value === watch('password') || 'Must match password'
+						})}
 					/>
 					<Button
 						type="submit"

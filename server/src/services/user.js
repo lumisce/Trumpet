@@ -30,3 +30,23 @@ exports.createUser = async (data) => {
 		throw(err)
 	}
 }
+
+exports.hasUsername = async (username) => {
+	try {
+		const user = await User.findOne({where: {username}})
+		return !!user
+	} catch(err) {
+		console.log('Error in hasUsername')
+		throw(err)
+	}
+}
+
+exports.hasEmail = async (email) => {
+	try {
+		const user = await User.findOne({where: {email}})
+		return !!user
+	} catch(err) {
+		console.log('Error in hasEmail')
+		throw(err)
+	}
+}
