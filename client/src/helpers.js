@@ -1,12 +1,13 @@
-export const fetchData = (url, method='GET', body={}, headers={}) => {
+export const fetchData = (url, method='GET', bodyObj={}, headers={}) => {
+	const body = method === 'GET' || { body: JSON.stringify(bodyObj) }
 	return fetch(url, {
 		method: method,
-		body: JSON.stringify(body),
 		headers: {
 			'Content-Type': 'application/json',
 			Accept: 'application/json',
 			...headers
-		}
+		},
+		...body
 	}).then(resp => {
 		if (!resp.ok) {
 			let err = new Error('Error '+resp.status)
@@ -21,6 +22,7 @@ export const fetchData = (url, method='GET', body={}, headers={}) => {
 				console.log('Something went wrong')
 				return
 			}
+			console.log(err)
 			throw err
 		})
 }

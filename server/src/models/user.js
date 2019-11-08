@@ -28,7 +28,7 @@ export default (sequelize, DataTypes) => {
 	}, {
 		defaultScope: {
 			attributes: {
-				exclude: ['password']
+				exclude: ['password', 'createdAt', 'updatedAt']
 			}
 		},
 		tableName: 'users'

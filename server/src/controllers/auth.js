@@ -12,7 +12,7 @@ module.exports.login = async (req, res, next) => {
 	} catch (err) {
 		let code = 500
 		switch (err.message) {
-			case 'User not found':
+			case 'Invalid credentials':
 				code = 404
 				break
 			default:

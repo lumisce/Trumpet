@@ -48,8 +48,8 @@ export const createUserValidation = () => {
 
 export const loginValidation = () => {
 	return [
-		body('email').isEmail(),
-		body('password').not().isEmpty()
+		body('username').not().isEmpty().withMessage('Required'),
+		body('password').not().isEmpty().withMessage('Required')
 	]
 }
 

@@ -5,22 +5,21 @@ import config from 'config'
 
 const User = db.User
 
-exports.login = async ({password, ...data}, client) => {
-	const user = await User.unscoped().findOne({where: data})
+exports.login = async ({password, username}, client) => {
+	const user = await User.unscoped().findOne({where: {username}})
 	if (!user) {
-		throw Error('User not found')
+		throw Error('Invalid credentials')
 	}
 
 	const passwordMatches = await bcrypt.compare(password, user.password)
 	if (!passwordMatches) {
-		throw Error('User not found')
+		throw Error('Invalid credentials')
 	}
 
 	const token = jwtSign(user, client)
 
 	return {
 		user: {
-			email: user.email,
 			username: user.username,
 		}, 
 		token: token
