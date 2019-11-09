@@ -1,14 +1,13 @@
 import request from 'supertest'
 import { expect } from 'chai'
-import db from '../src/models/index'
-import userFactory from './factories/user'
-
+import db from '../../src/models/index'
+import userFactory from '../factories/user'
 
 
 describe('Trumpet User API Tests', () => {
 	let server
 	before(async () => {
-		server = await require('../src/app')
+		server = await require('../../src/app')
 		await db.sequelize.truncate()
 		await userFactory(15)
 	})

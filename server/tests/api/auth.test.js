@@ -1,14 +1,13 @@
 import request from 'supertest'
 import { expect } from 'chai'
-import db from '../src/models/index'
-import userFactory from './factories/user'
-
+import db from '../../src/models/index'
+import userFactory from '../factories/user'
 
 
 describe('Trumpet Auth API Tests', () => {
 	let server
 	before(async () => {
-		server = await require('../src/app')
+		server = await require('../../src/app')
 		await db.sequelize.truncate()
 		await userFactory(15)
 		await userFactory(1, {
@@ -18,9 +17,7 @@ describe('Trumpet Auth API Tests', () => {
 	})
 	
 	it('fails validation in POST /api/auth/login', async () => {
-		const user = {
-			email: 'a',
-		}
+		const user = {}
 		const response = await request(server)
 			.post('/api/auth/login').send(user)
 		expect(response.status).to.equal(422)
@@ -28,13 +25,13 @@ describe('Trumpet Auth API Tests', () => {
 		expect(response.body).to.have.property('errors')
 		const errors = response.body.errors
 		expect(errors).to.be.an('object')
-		expect(errors).to.have.property('email')
+		expect(errors).to.have.property('username')
 		expect(errors).to.have.property('password')
 	})
 
 	it('fails find model in POST /api/auth/login', async () => {
 		const user = {
-			email: 'a@pie.com',
+			username: 'notapplepie',
 			password: 'password'
 		}
 		const response = await request(server)
@@ -44,7 +41,7 @@ describe('Trumpet Auth API Tests', () => {
 
 	it('fails password check in POST /api/auth/login', async () => {
 		const user = {
-			email: 'apple@pie.com',
+			username: 'applepie',
 			password: 'pass',
 		}
 		const response = await request(server)
@@ -54,7 +51,7 @@ describe('Trumpet Auth API Tests', () => {
 
 	it('returns an object from POST /api/auth/login', async () => {
 		const user = {
-			email: 'apple@pie.com',
+			username: 'applepie',
 			password: 'password',
 		}
 		const response = await request(server)
@@ -77,7 +74,7 @@ describe('Trumpet Auth API Tests', () => {
 
 	it('returns an object from GET /api/auth/curr after login', async () => {
 		const user = {
-			email: 'apple@pie.com',
+			username: 'applepie',
 			password: 'password',
 		}
 		const loginResponse = await request(server)

@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nodemon src/app.js --exec babel-node",
     "build": "babel src -d build --source-maps",
-    "test": "DEBUG=server:debug NODE_ENV=test mocha --require @babel/register --require core-js --require regenerator-runtime --reporter spec --exit tests/",
+    "test": "DEBUG=server:debug NODE_ENV=test mocha --require @babel/register --require core-js --require regenerator-runtime --reporter spec --exit \"tests/**/*.test.js\"",
     "serve": "NODE_ENV=production node build/app.js"
   },
   "devDependencies": {
