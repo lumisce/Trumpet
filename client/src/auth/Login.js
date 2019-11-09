@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import useForm from 'react-hook-form'
-import { Redirect } from 'react-router-dom'
+import { Redirect, withRouter } from 'react-router-dom'
 import { fetchData } from '../helpers'
 import { useSelector, useDispatch } from 'react-redux'
 import { LOGIN_USER } from '../store/constants'
@@ -47,8 +47,10 @@ const useStyles = makeStyles(theme => ({
 const Login = props => {
 	const [redirect, setRedirect] = useState(false)
 	const [error, setError] = useState('')
+
+	const { location } = props
 	const [afterRegister, setAfterRegister] = useState(
-		props.location.state && props.location.state.afterRegister)
+		location.state && location.state.afterRegister)
 
 	const user = useSelector(state => state.user)
 	const dispatch = useDispatch()
@@ -68,6 +70,7 @@ const Login = props => {
 				setError(errData.message)
 			})
 	}
+
 	const classes = useStyles()
 
 	return (
@@ -117,4 +120,4 @@ const Login = props => {
 	)
 }
 
-export default Login
+export default withRouter(Login)
