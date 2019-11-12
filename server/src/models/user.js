@@ -6,6 +6,7 @@ export default (sequelize, DataTypes) => {
 			unique: true,
 			validate: {
 				len: [3, 32],
+				is: /^\w+$/,
 				notNull: true
 			}
 		},
@@ -24,6 +25,11 @@ export default (sequelize, DataTypes) => {
 			validate: {
 				notNull: true
 			}
+		},
+		isPrivate: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			default: false
 		}
 	}, {
 		defaultScope: {
@@ -31,8 +37,19 @@ export default (sequelize, DataTypes) => {
 				exclude: ['password', 'createdAt', 'updatedAt']
 			}
 		},
+		underscored: true,
 		tableName: 'users'
 	})
+	
+	User.associate = (models) => {
+		User.hasMany(models.Trumpet)
+
+		User.belongsToMany(models.User, {as: 'Followings', foreignKey: 'following_id', through: 'follows'})
+		User.belongsToMany(models.User, {as: 'Followers', foreignKey: 'follower_id', through: 'follows'})
+		
+		User.belongsToMany(models.Trumpet, {as: 'Likes', through: 'likes'})
+		User.belongsToMany(models.Trumpet, {through: models.Bookmarks})
+	}
 
 	return User
 }
