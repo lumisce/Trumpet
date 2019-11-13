@@ -19,7 +19,8 @@ export default (sequelize, DataTypes) => {
 	})
 	
 	Tag.associate = (models) => {
-		Tag.belongsToMany(models.Trumpet, {through: 'trumpet_tags'})
+		Tag.belongsToMany(models.Trumpet, 
+			{through: models.TrumpetTags})
 	}
 
 	return Tag

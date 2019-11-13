@@ -29,7 +29,7 @@ export default (sequelize, DataTypes) => {
 		isPrivate: {
 			type: DataTypes.BOOLEAN,
 			allowNull: false,
-			default: false
+			defaultValue: false
 		}
 	}, {
 		defaultScope: {
@@ -44,11 +44,15 @@ export default (sequelize, DataTypes) => {
 	User.associate = (models) => {
 		User.hasMany(models.Trumpet)
 
-		User.belongsToMany(models.User, {as: 'Followings', foreignKey: 'following_id', through: 'follows'})
-		User.belongsToMany(models.User, {as: 'Followers', foreignKey: 'follower_id', through: 'follows'})
+		User.belongsToMany(models.User, 
+			{as: 'Followings', foreignKey: 'following_id', through: models.Follows})
+		User.belongsToMany(models.User, 
+			{as: 'Followers', foreignKey: 'follower_id', through: models.Follows})
 		
-		User.belongsToMany(models.Trumpet, {as: 'Likes', through: 'likes'})
-		User.belongsToMany(models.Trumpet, {through: models.Bookmarks})
+		User.belongsToMany(models.Trumpet, 
+			{as: 'Liked', through: models.Likes})
+		User.belongsToMany(models.Trumpet, 
+			{as: 'Bookmarked', through: models.Bookmarks})
 	}
 
 	return User
