@@ -1,7 +1,7 @@
 import { mapErrors } from '../common/helpers'
 import UserService from '../services/user'
 
-module.exports.getUsers = async (req, res, next) => {
+exports.getUsers = async (req, res, next) => {
 	let {page, limit, ...query} = req.query
 	page = req.query.page ? req.query.page : 1
 	limit = req.query.limit ? req.query.limit : 10
@@ -11,20 +11,20 @@ module.exports.getUsers = async (req, res, next) => {
 		return res.status(200).json({
 			status: 200,
 			data: users,
-			message: 'Users Successfully Retrieved'
+			message: 'Users Retrieved'
 		})
 	} catch (err) {
 		next(err)
 	}
 }
 
-module.exports.createUser = async (req, res, next) => {
+exports.createUser = async (req, res, next) => {
 	try {
 		let id = await UserService.createUser(req.body)
 		return res.status(200).json({
 			status: 200,
 			data: id,
-			message: 'User Successfully Created'
+			message: 'User Created'
 		})
 	} catch (err) {
 		if (err.errors) {

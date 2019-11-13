@@ -1,6 +1,6 @@
 import AuthService from '../services/auth'
 
-module.exports.login = async (req, res, next) => {
+exports.login = async (req, res, next) => {
 	try {
 		const client = req.protocol+'://'+req.get('host').split(':')[0]
 		const data = await AuthService.login(req.body, client)
@@ -25,13 +25,13 @@ module.exports.login = async (req, res, next) => {
 	}
 }
 
-module.exports.current = async (req, res, next) => {
+exports.current = async (req, res, next) => {
 	try {
 		const user = await AuthService.getCurrentUser(req.user)
 		return res.status(200).json({
 			status: 200,
 			data: user,
-			message: 'Logged in User Returned'
+			message: 'Current User Returned'
 		})
 	} catch (err) {
 		let code = 500

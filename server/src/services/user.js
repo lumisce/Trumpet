@@ -50,3 +50,16 @@ exports.hasEmail = async (email) => {
 		throw(err)
 	}
 }
+
+exports.getUser = async (id) => {
+	try {
+		const user = await db.User.findByPk(id)
+		if (!user) {
+			throw Error('No user')
+		}
+		return user
+	} catch (err) {
+		console.log('Error in getUser')
+		throw(err)
+	}
+}
