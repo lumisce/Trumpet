@@ -5,6 +5,7 @@ import models from './models/index'
 
 import userRouter from './routes/user'
 import authRouter from './routes/auth'
+import petRouter from './routes/pet'
 
 const app = express()
 const port = config.get('port')
@@ -14,6 +15,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 app.use('/api/users', userRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/pets', petRouter)
 
 app.use((err, req, res, next) => {
 	console.error(err.stack)

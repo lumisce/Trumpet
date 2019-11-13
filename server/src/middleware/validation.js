@@ -1,4 +1,8 @@
-import { query, body, validationResult } from 'express-validator'
+import {
+	query, body, 
+	validationResult,
+	sanitizeBody
+} from 'express-validator'
 import UserService from '../services/user'
 
 export const getUsersValidation = () => {
@@ -50,6 +54,15 @@ export const loginValidation = () => {
 	return [
 		body('username').not().isEmpty().withMessage('Required'),
 		body('password').not().isEmpty().withMessage('Required')
+	]
+}
+
+export const trumpetInteractionValidation = () => {
+	return [
+		body('id').isInt(),
+		body('state').isBoolean(),
+		sanitizeBody('id').toInt(),
+		sanitizeBody('state').toBoolean()
 	]
 }
 
